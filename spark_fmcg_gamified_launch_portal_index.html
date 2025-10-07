@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Spark FMCG — Gamified Launch Portal</title>
+  <meta name="description" content="Spark FMCG Gamified Launch Portal — onboarding, training & market blitz tracker" />
+  <style>
+    /* ----- Fonts & base ----- */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+    :root{
+      --bg:#0f1724; /* deep graphite */
+      --card:#0b1220;
+      --accent:#ff3b30; /* spark red */
+      --accent-2:#00c2ff; /* neon blue */
+      --muted:#94a3b8;
+      --glass: rgba(255,255,255,0.03);
+      --success:#3bd671;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#071019 75%);color:#e6eef8;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+      padding:32px;
+    }
+
+    /* ----- layout ----- */
+    .container{max-width:1200px;margin:0 auto}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:20px}
+    .title{font-size:18px;font-weight:700}
+    .subtitle{font-size:12px;color:var(--muted)}
+
+    nav{display:flex;gap:12px}
+    .navlink{padding:10px 14px;border-radius:10px;color:var(--muted);text-decoration:none;font-weight:600}
+    .navlink:hover{color:#fff;background:rgba(255,255,255,0.03)}
+
+    main{display:grid;grid-template-columns: 1fr 420px;gap:24px}
+
+    /* ----- hero card ----- */
+    .hero{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:20px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,0.6);}
+    .hero-top{display:flex;justify-content:space-between;align-items:center}
+    .hero-left{max-width:65%}
+    .tag{display:inline-block;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:999px;color:var(--muted);font-weight:700;font-size:12px}
+    .hero-h{font-size:20px;margin:12px 0 4px}
+    .hero-p{color:var(--muted);font-size:14px;margin:0}
+
+    .big-progress{margin-top:18px;background:linear-gradient(90deg,#07131a,#081826);padding:14px;border-radius:12px;display:flex;align-items:center;gap:14px}
+    .radial{width:96px;height:96px;border-radius:999px;background:conic-gradient(var(--accent) 0% 0%,rgba(255,255,255,0.05) 0% 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .radial-value{font-size:18px;font-weight:800}
+    .progress-meta{flex:1}
+    .progress-bar{height:10px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden}
+    .progress-bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0%;border-radius:10px}
+    .btn{background:linear-gradient(90deg,var(--accent),#ff6b6b);padding:10px 14px;border-radius:10px;border:none;color:white;font-weight:700;cursor:pointer}
+
+    /* ----- cards & dashboard ----- */
+    .card{background:var(--card);padding:14px;border-radius:12px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+    .metric{padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent)}
+    .metric h4{margin:0;font-size:12px;color:var(--muted)}
+    .metric p{margin:6px 0 0;font-size:16px;font-weight:800}
+
+    /* ----- Level cards ----- */
+    .levels{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+    .level{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent)}
+    .avatar{width:64px;height:64px;border-radius:12px;background:#071526;display:flex;align-items:center;justify-content:center;font-weight:700}
+    .lvl-title{font-weight:700}
+    .lvl-sub{font-size:13px;color:var(--muted)}
+    .unlock{margin-left:auto;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.03);font-weight:700}
+
+    /* ----- leaderboard ----- */
+    .leader{margin-top:12px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;text-align:left;font-size:13px}
+    thead th{color:var(--muted);font-size:12px}
+    tbody tr{background:linear-gradient(180deg,transparent,rgba(255,255,255,0.01));border-radius:8px}
+
+    /* ----- insights ----- */
+    .insight{display:flex;gap:12px;align-items:center}
+    .insight .big{font-size:22px;font-weight:800}
+    .insight p{margin:0;color:var(--muted);font-size:13px}
+
+    /* ----- footer ----- */
+    footer{margin-top:28px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* small screens */
+    @media (max-width:980px){main{grid-template-columns:1fr;}
+      .hero-left{max-width:100%}
+    }
+
+    /* subtle animations */
+    .fade-in{opacity:0;transform:translateY(8px);animation:fadeIn .6s forwards}
+    @keyframes fadeIn{to{opacity:1;transform:none}}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">SF</div>
+        <div>
+          <div class="title">Spark FMCG — Gamified Launch Portal</div>
+          <div class="subtitle">Onboarding • Training • Market Blitz</div>
+        </div>
+      </div>
+      <nav>
+        <a class="navlink" href="#overview">Overview</a>
+        <a class="navlink" href="#dashboard">Dashboard</a>
+        <a class="navlink" href="#training">Training</a>
+        <a class="navlink" href="#leaderboard">Leaderboard</a>
+        <a class="navlink" href="#insights">Insights</a>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <div class="hero card fade-in" id="overview">
+          <div class="hero-top">
+            <div class="hero-left">
+              <span class="tag">LAUNCH: SNACKS & BEVERAGES — NORTHERN REGION</span>
+              <h1 class="hero-h">Level up Spark’s salesforce — fast, flexible, field-ready</h1>
+              <p class="hero-p">This portal demonstrates how Spark sources, trains, and deploys a hybrid salesforce using gig & interim models, gamified training and performance-led deployment.</p>
+
+              <div class="big-progress">
+                <div class="radial" id="radial"><div class="radial-value" id="radialValue">0%</div></div>
+                <div class="progress-meta">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <strong>Market Blitz Progress</strong>
+                    <span class="subtitle">ETA: 2–3 weeks</span>
+                  </div>
+                  <div style="margin-top:8px">
+                    <div class="progress-bar"><i id="masterBar"></i></div>
+                    <div style="display:flex;gap:12px;margin-top:8px">
+                      <button class="btn" id="simulateBtn">Simulate Launch</button>
+                      <button class="btn" id="resetBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.06)">Reset</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="width:360px">
+              <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div>
+                    <div style="font-weight:800">Quick Metrics</div>
+                    <div class="subtitle">Hiring • Training • Activation</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div style="font-weight:800;font-size:18px">Phase 1</div>
+                    <div class="subtitle">Pre-Launch</div>
+                  </div>
+                </div>
+                <div class="grid-3">
+                  <div class="metric">
+                    <h4>Reps Deployed</h4>
+                    <p id="metricReps">0</p>
+                  </div>
+                  <div class="metric">
+                    <h4>Training Complete</h4>
+                    <p id="metricTrain">0%</p>
+                  </div>
+                  <div class="metric">
+                    <h4>Outlets Secured</h4>
+                    <p id="metricOutlets">0</p>
+                  </div>
+                </div>
+                <div style="margin-top:10px;font-size:13px;color:var(--muted)">Tip: Click <strong>Simulate Launch</strong> to animate progress and badges.</div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div style="font-weight:800">Launch Targets</div>
+                  <div class="subtitle">Priority Outlets</div>
+                </div>
+                <div style="margin-top:8px">
+                  <div style="font-size:13px;color:var(--muted)">Retailers to secure before competitors</div>
+                  <ul style="margin:8px 0 0 18px;color:var(--muted);font-size:13px">
+                    <li>Top 100 Hypermarkets</li>
+                    <li>Key Modern Trade Chains</li>
+                    <li>500+ General Trade Outlets</li>
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="levels" style="margin-top:14px">
+            <div style="font-weight:800">Level map — Recruit → Champion</div>
+            <div class="level">
+              <div class="avatar">R</div>
+              <div>
+                <div class="lvl-title">Recruit</div>
+                <div class="lvl-sub">Hired via TeamLease / Gig platforms — 0–3 days</div>
+              </div>
+              <div class="unlock">Locked</div>
+            </div>
+            <div class="level">
+              <div class="avatar">T</div>
+              <div>
+                <div class="lvl-title">Trainee</div>
+                <div class="lvl-sub">Completed mobile micro-learning & gamified modules — 5–7 days</div>
+              </div>
+              <div class="unlock">Locked</div>
+            </div>
+            <div class="level">
+              <div class="avatar">F</div>
+              <div>
+                <div class="lvl-title">Field Scout</div>
+                <div class="lvl-sub">First 10 outlets onboarded — shadow selling with senior rep</div>
+              </div>
+              <div class="unlock">Locked</div>
+            </div>
+            <div class="level">
+              <div class="avatar">C</div>
+              <div>
+                <div class="lvl-title">Field Champion</div>
+                <div class="lvl-sub">Territory KPIs met — ready for full deployment</div>
+              </div>
+              <div class="unlock">Locked</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="dashboard" class="card fade-in" style="margin-top:18px">
+          <h3>Progress Dashboard</h3>
+          <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:260px">
+              <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div><strong>Hiring</strong><div class="subtitle">Reps sourced via consultancies & gig platforms</div></div>
+                  <div id="hiringPct">0%</div>
+                </div>
+                <div style="margin-top:8px" class="progress-bar"><i id="hiringBar"></i></div>
+                <div style="margin-top:8px;color:var(--muted);font-size:13px">Turnaround: &lt;10 days</div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div><strong>Training</strong><div class="subtitle">Mobile LMS + gamification</div></div>
+                  <div id="trainingPct">0%</div>
+                </div>
+                <div style="margin-top:8px" class="progress-bar"><i id="trainingBar"></i></div>
+                <div style="margin-top:8px;color:var(--muted);font-size:13px">Completion target: 90%+</div>
+              </div>
+
+            </div>
+
+            <div style="flex:1;min-width:260px">
+              <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div><strong>Field Activation</strong><div class="subtitle">Outlets secured & displays set</div></div>
+                  <div id="fieldPct">0%</div>
+                </div>
+                <div style="margin-top:8px" class="progress-bar"><i id="fieldBar"></i></div>
+                <div style="margin-top:8px;color:var(--muted);font-size:13px">Priority-first rollout</div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div><strong>Sales Target</strong><div class="subtitle">Early traction & secondary sales</div></div>
+                  <div id="salesPct">0%</div>
+                </div>
+                <div style="margin-top:8px" class="progress-bar"><i id="salesBar"></i></div>
+                <div style="margin-top:8px;color:var(--muted);font-size:13px">Measured daily via dashboards</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div id="training" class="card fade-in" style="margin-top:18px">
+          <h3>Training Journey</h3>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px">
+            <div style="flex:1;min-width:260px" class="card">
+              <div style="font-weight:800">Mobile LMS — 5–7 days</div>
+              <div style="margin-top:8px;color:var(--muted);font-size:13px">Product modules, pitch scripts, compliance, objection handling and retailer engagement tips.</div>
+              <ol style="margin-top:10px;color:var(--muted)">
+                <li>Module 1: Product + USPs</li>
+                <li>Module 2: Pitch + Merchandising</li>
+                <li>Module 3: Pricing & Promotions</li>
+                <li>Module 4: Compliance & Safety</li>
+              </ol>
+              <div style="margin-top:10px"><strong>Engagement</strong></div>
+              <div style="margin-top:6px;color:var(--muted);font-size:13px">Quizzes, leaderboards, completion badges, and small cash / voucher rewards for top 10 performers.</div>
+            </div>
+
+            <div style="flex:1;min-width:260px" class="card">
+              <div style="font-weight:800">Shadow Selling — 7 days</div>
+              <div style="margin-top:8px;color:var(--muted);font-size:13px">Each interim rep pairs with a senior rep for first week to learn territory nuances and retailer ways of working.</div>
+              <div style="margin-top:10px"><strong>Micro-KPIs (Week 1)</strong></div>
+              <ul style="color:var(--muted);margin-top:6px">
+                <li>Visits per day (target: 8)</li>
+                <li>Display set-up accuracy (target: 90%)</li>
+                <li>First-order conversion (target: 30%)</li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <div id="leaderboard" class="card fade-in leader" style="margin-top:18px">
+          <h3>Leaderboard — Top Reps</h3>
+          <table>
+            <thead>
+              <tr><th>Rank</th><th>Rep</th><th>Territory</th><th>Score</th></tr>
+            </thead>
+            <tbody id="leaderboardBody">
+              <!-- rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="insights" class="card fade-in" style="margin-top:18px">
+          <h3>Insights & ROI Summary</h3>
+          <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:240px" class="card">
+              <div class="insight"><div class="big" id="roiPct">0%</div><div><p>Projected revenue uplift vs baseline</p></div></div>
+            </div>
+            <div style="flex:1;min-width:240px" class="card">
+              <div class="insight"><div class="big" id="costSave">0%</div><div><p>Hiring & training cost savings</p></div></div>
+            </div>
+            <div style="flex:1;min-width:240px" class="card">
+              <div class="insight"><div class="big" id="payback">0 mo</div><div><p>Estimated payback period</p></div></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+      <aside>
+        <div class="card fade-in">
+          <h4>Quick Controls</h4>
+          <div style="margin-top:10px">
+            <label style="font-size:13px;color:var(--muted)">Reps to simulate</label>
+            <input id="inputReps" type="number" value="120" min="10" style="width:100%;margin-top:8px;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit" />
+            <button class="btn" id="applyReps" style="width:100%;margin-top:10px">Apply</button>
+          </div>
+          <div style="margin-top:14px">
+            <h4 style="margin:0">Badges</h4>
+            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+              <div style="padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.02);font-weight:700">Fast Recruiter</div>
+              <div style="padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.02);font-weight:700">Training Star</div>
+              <div style="padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.02);font-weight:700">Blitz Master</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card fade-in" style="margin-top:12px">
+          <h4>Notes</h4>
+          <p class="subtitle">This interface is a demo to visualize Spark's launch playbook: hybrid hiring, mobile training, rapid field activation and KPI-driven deployment.</p>
+        </div>
+
+      </aside>
+    </main>
+
+    <footer>
+      Demo built for DS Group case competition • Team Spark
+    </footer>
+  </div>
+
+  <script>
+    // ---------- Mock data & state ----------
+    const state = {
+      reps: 120,
+      hiring: 0,
+      training: 0,
+      field: 0,
+      sales: 0
+    }
+
+    // ---------- Elements ----------
+    const masterBar = document.getElementById('masterBar')
+    const radialValue = document.getElementById('radialValue')
+    const radial = document.getElementById('radial')
+    const simulateBtn = document.getElementById('simulateBtn')
+    const resetBtn = document.getElementById('resetBtn')
+    const metricReps = document.getElementById('metricReps')
+    const metricTrain = document.getElementById('metricTrain')
+    const metricOutlets = document.getElementById('metricOutlets')
+
+    const hiringBar = document.getElementById('hiringBar')
+    const trainingBar = document.getElementById('trainingBar')
+    const fieldBar = document.getElementById('fieldBar')
+    const salesBar = document.getElementById('salesBar')
+
+    const hiringPct = document.getElementById('hiringPct')
+    const trainingPct = document.getElementById('trainingPct')
+    const fieldPct = document.getElementById('fieldPct')
+    const salesPct = document.getElementById('salesPct')
+
+    const roiPct = document.getElementById('roiPct')
+    const costSave = document.getElementById('costSave')
+    const payback = document.getElementById('payback')
+
+    const leaderboardBody = document.getElementById('leaderboardBody')
+
+    const inputReps = document.getElementById('inputReps')
+    const applyReps = document.getElementById('applyReps')
+
+    // ---------- helper ----------
+    function setBar(el, pct){
+      pct = Math.max(0, Math.min(100, Math.round(pct)))
+      el.style.width = pct + '%'
+    }
+    function setText(id, txt){ id.textContent = txt }
+
+    function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+
+    // ---------- leaderboard mock ----------
+    const repsMock = Array.from({length:12}).map((_,i)=>({
+      rank: i+1,
+      name: ['Amit','Neha','Rahul','Priya','Sahil','Kavya','Rohan','Isha','Manu','Tarun','Sana','Vikram'][i],
+      territory: ['Delhi Central','Noida','Gurgaon','Ludhiana','Chandigarh','Ambala','Amritsar','Jalandhar','Meerut','Ghaziabad','Rohtak','Panipat'][i],
+      score: randomInt(60,98)
+    }))
+
+    function renderLeaderboard(){
+      leaderboardBody.innerHTML = ''
+      repsMock.forEach(r=>{
+        const tr = document.createElement('tr')
+        tr.innerHTML = `<td>${r.rank}</td><td>${r.name}</td><td>${r.territory}</td><td>${r.score}</td>`
+        leaderboardBody.appendChild(tr)
+      })
+    }
+
+    // ---------- simulate animation ----------
+    let anim = null
+    function simulate(){
+      // create target values based on reps
+      const reps = state.reps
+      const target = {
+        hiring: Math.min(100, Math.round(40 + reps/10)),
+        training: Math.min(100, Math.round(20 + reps/8)),
+        field: Math.min(100, Math.round(10 + reps/6)),
+        sales: Math.min(100, Math.round(5 + reps/12))
+      }
+      // animate over 5 seconds
+      const duration = 5000
+      const start = performance.now()
+      const startVals = {...state}
+      cancelAnimationFrame(anim)
+      function frame(t){
+        const p = Math.min(1,(t-start)/duration)
+        state.hiring = Math.round(startVals.hiring + (target.hiring - startVals.hiring)*easeOutQuad(p))
+        state.training = Math.round(startVals.training + (target.training - startVals.training)*easeOutQuad(p))
+        state.field = Math.round(startVals.field + (target.field - startVals.field)*easeOutQuad(p))
+        state.sales = Math.round(startVals.sales + (target.sales - startVals.sales)*easeOutQuad(p))
+
+        // update UI
+        setBar(hiringBar, state.hiring)
+        setBar(trainingBar, state.training)
+        setBar(fieldBar, state.field)
+        setBar(salesBar, state.sales)
+
+        setText(hiringPct, state.hiring + '%')
+        setText(trainingPct, state.training + '%')
+        setText(fieldPct, state.field + '%')
+        setText(salesPct, state.sales + '%')
+
+        // master progress = weighted
+        const master = Math.round((state.hiring*0.3 + state.training*0.3 + state.field*0.25 + state.sales*0.15))
+        setBar(masterBar, master)
+        radialValue.textContent = master + '%'
+
+        // quick metrics
+        setText(metricReps, state.reps)
+        setText(metricTrain, state.training + '%')
+        setText(metricOutlets, Math.round((state.field/100)*500))
+
+        // insights
+        setText(roiPct, Math.round(8 + master/6) + '%')
+        setText(costSave, Math.round(25 + master/6) + '%')
+        setText(payback, Math.max(1, Math.round(4 - master/30)) + ' mo')
+
+        // unlock levels visually
+        unlockLevels(master)
+
+        if(p<1) anim = requestAnimationFrame(frame)
+      }
+      anim = requestAnimationFrame(frame)
+    }
+
+    function reset(){
+      cancelAnimationFrame(anim)
+      state.hiring = 0;state.training=0;state.field=0;state.sales=0
+      setBar(hiringBar,0);setBar(trainingBar,0);setBar(fieldBar,0);setBar(salesBar,0);setBar(masterBar,0)
+      radialValue.textContent = '0%'
+      setText(hiringPct,'0%');setText(trainingPct,'0%');setText(fieldPct,'0%');setText(salesPct,'0%')
+      setText(metricReps,state.reps);setText(metricTrain,'0%');setText(metricOutlets,'0')
+      setText(roiPct,'0%');setText(costSave,'0%');setText(payback,'0 mo')
+      lockAllLevels()
+    }
+
+    function unlockLevels(master){
+      const levelEls = document.querySelectorAll('.level')
+      // thresholds: 20,45,70,90
+      const t = [20,45,70,90]
+      levelEls.forEach((el,i)=>{
+        const badge = el.querySelector('.unlock')
+        if(master>=t[i]){badge.textContent='Unlocked';badge.style.background='linear-gradient(90deg,var(--accent),var(--accent-2))';badge.style.color='#071222'}
+        else {badge.textContent='Locked';badge.style.background='rgba(255,255,255,0.03)';badge.style.color=''}
+      })
+    }
+    function lockAllLevels(){ const levelEls=document.querySelectorAll('.level'); levelEls.forEach(el=>{const b=el.querySelector('.unlock');b.textContent='Locked';b.style.background='rgba(255,255,255,0.03)';b.style.color=''} ) }
+
+    function easeOutQuad(t){return t*(2-t)}
+
+    // ---------- interactions ----------
+    simulateBtn.addEventListener('click',()=>simulate())
+    resetBtn.addEventListener('click',()=>reset())
+    applyReps.addEventListener('click',()=>{ const v=parseInt(inputReps.value)||120; state.reps=v; setText(metricReps,v) })
+
+    // initialize
+    renderLeaderboard()
+    reset()
+
+    // smooth scroll for nav
+    document.querySelectorAll('nav a').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth',block:'start'});})})
+
+    // small reveal animation on load
+    document.querySelectorAll('.fade-in').forEach((el,i)=>{el.style.animationDelay=(i*80)+'ms'})
+
+  </script>
+</body>
+</html>
